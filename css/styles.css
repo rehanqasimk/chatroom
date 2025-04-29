@@ -1,0 +1,210 @@
+/* General Styles */
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2980b9;
+    --danger-color: #e74c3c;
+    --success-color: #2ecc71;
+    --light-gray: #f4f4f4;
+    --text-color: #333;
+    --border-color: #ddd;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: #f9f9f9;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header Styles */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-info input {
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+/* Button Styles */
+.btn {
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: var(--secondary-color);
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+.btn-success {
+    background-color: var(--success-color);
+}
+
+.btn-success:hover {
+    background-color: #27ae60;
+}
+
+/* Section Styles */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Chat Rooms List */
+.rooms-container {
+    margin-top: 20px;
+}
+
+.room-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s;
+}
+
+.owned-room {
+    background-color: var(--light-gray);
+    border-left: 5px solid var(--primary-color);
+}
+
+.room-info {
+    flex-grow: 1;
+}
+
+.room-name {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.room-owner {
+    font-size: 14px;
+    color: #666;
+}
+
+.room-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Form Styles */
+.form-container {
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Footer Styles */
+footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    color: #666;
+}
+
+/* HTMX Loading States */
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+.htmx-request .htmx-indicator {
+    opacity: 1;
+}
+
+.htmx-request.htmx-indicator {
+    opacity: 1;
+}
+
+/* Toast Notifications */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    background-color: var(--success-color);
+    color: white;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 1000;
+}
+
+.toast.show {
+    opacity: 1;
+}
+
+.toast.error {
+    background-color: var(--danger-color);
+}
