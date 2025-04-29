@@ -2,6 +2,10 @@
 
 A simple chat room application that allows users to create, edit, and delete chat rooms using HTMX without full page reloads.
 
+## Live Demo
+
+Check out the live demo at: [https://chat-room.rehanqasim.com](https://chat-room.rehanqasim.com)
+
 ## Overview
 
 This application demonstrates the use of HTMX to create a seamless user experience with a single-page-like application without using a complex frontend framework. The application allows users to:
