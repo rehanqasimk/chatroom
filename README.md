@@ -123,7 +123,3 @@ chat-room/
 - Add real-time updates using WebSockets
 - Implement search functionality for rooms
 - Add user profile customization
-
-## License
-
-[MIT License](LICENSE)
