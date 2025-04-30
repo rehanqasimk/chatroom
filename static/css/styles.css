@@ -7,6 +7,8 @@
     --light-gray: #f4f4f4;
     --text-color: #333;
     --border-color: #ddd;
+    --joined-color: #f1c40f;
+    --warning-color: #f39c12;
 }
 
 * {
@@ -81,6 +83,14 @@ header {
     background-color: #27ae60;
 }
 
+.btn-warning {
+    background-color: var(--warning-color);
+}
+
+.btn-warning:hover {
+    background-color: #d35400;
+}
+
 /* Section Styles */
 .section-header {
     display: flex;
@@ -109,6 +119,11 @@ header {
 .owned-room {
     background-color: var(--light-gray);
     border-left: 5px solid var(--primary-color);
+}
+
+.joined-room {
+    background-color: rgba(241, 196, 15, 0.1);
+    border-left: 5px solid var(--joined-color);
 }
 
 .room-info {
