@@ -32,6 +32,7 @@ This application demonstrates the use of HTMX to create a seamless user experien
 chat-room/
 ├── main.py              # Flask server implementation
 ├── requirements.txt     # Python dependencies
+├── pytest.ini          # Pytest configuration
 ├── data/
 │   ├── joined_rooms.json   # Data persistence for joined rooms
 │   └── rooms.json          # Data persistence for chat rooms
@@ -44,6 +45,13 @@ chat-room/
 │   │   └── favicon.svg # Application icon
 │   └── js/
 │       └── app.js      # Client-side application logic
+├── tests/              # Test files
+│   ├── conftest.py     # Pytest fixtures and configuration
+│   ├── test_data_persistence.py  # Tests for data persistence
+│   ├── test_room_api.py          # Tests for room API
+│   └── test_room_membership.py   # Tests for room membership
+├── coverage/           # Coverage reports
+│   └── test_coverage.png # Test coverage screenshot
 └── README.md           # This documentation file
 ```
 
@@ -103,6 +111,38 @@ chat-room/
 2. Once joined, the button changes to "Leave".
 3. Click "Leave" to exit a room you've joined.
 
+## Testing and Code Coverage
+
+The application includes a comprehensive test suite that validates core functionality. The tests are implemented using pytest and cover:
+
+1. **Room API Tests**: Verifies CRUD operations for chat rooms
+2. **Room Membership Tests**: Validates joining and leaving chat rooms
+3. **Data Persistence Tests**: Tests loading and saving of room data and joining status
+
+### Test Coverage
+
+The current test suite achieves 88% code coverage of the main application file:
+
+![Coverage Report](./coverage/test_coverage.png)
+
+- **Total Lines of Code**: 136
+- **Lines Covered**: 120
+- **Lines Not Covered**: 16
+- **Coverage Percentage**: 88%
+
+The not covered lines are primarily in error handling paths that are less likely to be executed in normal operations.
+
+### Running Tests
+
+To run the tests and generate a coverage report:
+
+```
+pip install -r requirements.txt  # Ensure test dependencies are installed
+pytest  # Run tests with coverage reporting
+```
+
+The HTML coverage report is generated in the `htmlcov` directory. Open `htmlcov/index.html` in a browser to view detailed coverage information.
+
 ## Design Decisions and Assumptions
 
 ### Backend Implementation
@@ -130,5 +170,14 @@ chat-room/
 
 - The UI is designed to be simple and intuitive.
 - Form validation ensures that room names cannot be empty.
+
+## Future Enhancements
+
+- Implement actual chat functionality within rooms
+- Add user authentication and persistent user accounts
+- Implement real-time updates using WebSockets
+- Add search functionality for rooms
+- Add user profile customization
+- Deploy with a production-grade WSGI server like Gunicorn
 
 
