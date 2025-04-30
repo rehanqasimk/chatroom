@@ -7,16 +7,71 @@ import os
 app = Flask(__name__, static_folder='../static', static_url_path='/')
 CORS(app)  # Enable CORS for all domains on all routes
 
-# Initialize with some sample data
-chat_rooms = [
-    {'id': 1, 'name': 'General Discussion', 'owner': 'Admin', 'createdAt': datetime.now().isoformat()},
-    {'id': 2, 'name': 'Tech Talk', 'owner': 'User1', 'createdAt': datetime.now().isoformat()}
-]
-next_id = len(chat_rooms) + 1
+# File paths for persisting data
+DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
+ROOMS_FILE = os.path.join(DATA_DIR, 'rooms.json')
+JOINED_ROOMS_FILE = os.path.join(DATA_DIR, 'joined_rooms.json')
 
-# Dictionary to track which users have joined which rooms
-# Format: {username: [room_id1, room_id2, ...]}
-joined_rooms = {}
+# Create data directory if it doesn't exist
+os.makedirs(DATA_DIR, exist_ok=True)
+
+# Load or initialize chat rooms
+def load_rooms():
+    try:
+        if os.path.exists(ROOMS_FILE):
+            with open(ROOMS_FILE, 'r') as f:
+                rooms = json.load(f)
+                return rooms
+        else:
+            # Initialize with some sample data
+            rooms = [
+                {'id': 1, 'name': 'General Discussion', 'owner': 'Admin', 'createdAt': datetime.now().isoformat()},
+                {'id': 2, 'name': 'Tech Talk', 'owner': 'User1', 'createdAt': datetime.now().isoformat()}
+            ]
+            save_rooms(rooms)
+            return rooms
+    except Exception as e:
+        print(f"Error loading rooms: {e}")
+        return [
+            {'id': 1, 'name': 'General Discussion', 'owner': 'Admin', 'createdAt': datetime.now().isoformat()},
+            {'id': 2, 'name': 'Tech Talk', 'owner': 'User1', 'createdAt': datetime.now().isoformat()}
+        ]
+
+# Save chat rooms to file
+def save_rooms(rooms):
+    try:
+        with open(ROOMS_FILE, 'w') as f:
+            json.dump(rooms, f)
+    except Exception as e:
+        print(f"Error saving rooms: {e}")
+
+# Load or initialize joined rooms
+def load_joined_rooms():
+    try:
+        if os.path.exists(JOINED_ROOMS_FILE):
+            with open(JOINED_ROOMS_FILE, 'r') as f:
+                joined = json.load(f)
+                return joined
+        else:
+            joined = {}
+            save_joined_rooms(joined)
+            return joined
+    except Exception as e:
+        print(f"Error loading joined rooms: {e}")
+        return {}
+
+# Save joined rooms to file
+def save_joined_rooms(joined):
+    try:
+        with open(JOINED_ROOMS_FILE, 'w') as f:
+            json.dump(joined, f)
+    except Exception as e:
+        print(f"Error saving joined rooms: {e}")
+
+# Load initial data
+chat_rooms = load_rooms()
+next_id = max([room['id'] for room in chat_rooms]) + 1 if chat_rooms else 1
+joined_rooms = load_joined_rooms()
 
 # Template for rooms list HTML
 ROOMS_LIST_TEMPLATE = '''
@@ -138,7 +193,7 @@ def cancel_create_room():
 
 @app.route('/api/rooms/create', methods=['POST'])
 def create_room():
-    global next_id
+    global next_id, chat_rooms
     
     # Get room name from form data
     room_name = request.form.get('roomName')
@@ -160,6 +215,9 @@ def create_room():
     chat_rooms.append(new_room)
     next_id += 1
     
+    # Save to file
+    save_rooms(chat_rooms)
+    
     # Get list of rooms this user has joined
     user_joined_rooms = joined_rooms.get(username, [])
     
@@ -179,6 +237,8 @@ def get_edit_room_form(room_id):
 
 @app.route('/api/rooms/<int:room_id>/edit', methods=['PUT'])
 def update_room(room_id):
+    global chat_rooms
+    
     # Get room name from form data
     room_name = request.form.get('roomName')
     # Get username (in a real app would be from authentication)
@@ -196,6 +256,9 @@ def update_room(room_id):
     # Update room name
     room['name'] = room_name
     
+    # Save to file
+    save_rooms(chat_rooms)
+    
     # Get list of rooms this user has joined
     user_joined_rooms = joined_rooms.get(username, [])
     
@@ -204,7 +267,8 @@ def update_room(room_id):
 
 @app.route('/api/rooms/<int:room_id>/delete', methods=['DELETE'])
 def delete_room(room_id):
-    global chat_rooms
+    global chat_rooms, joined_rooms
+    
     # Get username (in a real app would be from authentication)
     username = request.args.get('username', 'User1')
     
@@ -216,11 +280,13 @@ def delete_room(room_id):
     
     # Remove room from list
     chat_rooms = [r for r in chat_rooms if r['id'] != room_id]
+    save_rooms(chat_rooms)
     
     # If any users have joined this room, remove it from their joined_rooms list
     for user, rooms in joined_rooms.items():
         if room_id in rooms:
             joined_rooms[user] = [r for r in rooms if r != room_id]
+    save_joined_rooms(joined_rooms)
     
     # Get list of rooms this user has joined
     user_joined_rooms = joined_rooms.get(username, [])
@@ -230,6 +296,8 @@ def delete_room(room_id):
 
 @app.route('/api/rooms/<int:room_id>/join', methods=['GET'])
 def join_room(room_id):
+    global joined_rooms
+    
     # Get username from request
     username = request.args.get('username', 'User1')
     
@@ -245,12 +313,15 @@ def join_room(room_id):
     
     if room_id not in joined_rooms[username]:
         joined_rooms[username].append(room_id)
+        save_joined_rooms(joined_rooms)
     
     # Refresh the rooms list to show updated UI
     return render_template_string(ROOMS_LIST_TEMPLATE, rooms=chat_rooms, username=username, joined_rooms=joined_rooms.get(username, []))
 
 @app.route('/api/rooms/<int:room_id>/leave', methods=['GET'])
 def leave_room(room_id):
+    global joined_rooms
+    
     # Get username from request
     username = request.args.get('username', 'User1')
     
@@ -263,9 +334,7 @@ def leave_room(room_id):
     # Remove room from user's joined rooms
     if username in joined_rooms and room_id in joined_rooms[username]:
         joined_rooms[username].remove(room_id)
-    
-    # Return a success message
-    message = f"Left room: {room['name']}"
+        save_joined_rooms(joined_rooms)
     
     # Refresh the rooms list to show updated UI
     return render_template_string(ROOMS_LIST_TEMPLATE, rooms=chat_rooms, username=username, joined_rooms=joined_rooms.get(username, []))
