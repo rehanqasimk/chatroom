@@ -1,6 +1,6 @@
 # Chat Room Application
 
-A simple chat room application that allows users to create, edit, and delete chat rooms using HTMX without full page reloads.
+A simple chat room application that allows users to create, edit, and delete chat rooms using HTMX with a Flask backend for seamless user experience without full page reloads.
 
 ## Live Demo
 
@@ -14,7 +14,7 @@ This application demonstrates the use of HTMX to create a seamless user experien
 - Edit the names of their own chat rooms
 - Delete their own chat rooms
 - View a list of available chat rooms
-- "Join" chat rooms (view-only functionality)
+- Join and leave chat rooms
 
 ## Technologies Used
 
@@ -23,18 +23,28 @@ This application demonstrates the use of HTMX to create a seamless user experien
 - **JavaScript**: For client-side logic
 - **HTMX**: For handling AJAX requests without full page reloads
 - **Hyperscript**: For additional interactive behaviors
+- **Flask**: Python web framework providing the backend API
+- **Flask-CORS**: For enabling cross-origin resource sharing
 
 ## Project Structure
 
 ```
 chat-room/
-├── css/
-│   └── styles.css         # Styling for the application
-├── js/
-│   ├── app.js             # Main application logic
-│   └── mock-api.js        # Mock API service that simulates a backend
-├── index.html             # Main HTML file
-└── README.md              # This documentation file
+├── main.py              # Flask server implementation
+├── requirements.txt     # Python dependencies
+├── data/
+│   ├── joined_rooms.json   # Data persistence for joined rooms
+│   └── rooms.json          # Data persistence for chat rooms
+├── server/             # Server-related files
+├── static/
+│   ├── index.html      # Main HTML file
+│   ├── css/
+│   │   └── styles.css  # Styling for the application
+│   ├── img/
+│   │   └── favicon.svg # Application icon
+│   └── js/
+│       └── app.js      # Client-side application logic
+└── README.md           # This documentation file
 ```
 
 ## Setup and Installation
@@ -45,20 +55,26 @@ chat-room/
    cd chat-room
    ```
 
-2. Since this is a pure frontend application with no build steps, you can open it directly in your browser:
-   - Double-click on `index.html`, or
-   - Use a local development server like Python's built-in HTTP server:
-     ```
-     python -m http.server
-     ```
-     Then navigate to `http://localhost:8000` in your browser.
-   - Or use any other static file server of your choice.
+2. Install the required Python dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+
+3. Run the Flask server:
+   ```
+   python main.py
+   ```
+
+4. Open your browser and navigate to:
+   ```
+   http://localhost:5000
+   ```
 
 ## How to Use the Application
 
 ### User Identification
 
-- When you first load the application, you'll be assigned a random username (e.g., "User123").
+- When you first load the application, you'll be assigned a default username ("User1").
 - You can change your username by editing the "Logged in as:" input field.
 - Your username determines which chat rooms you own and can therefore edit or delete.
 
@@ -81,18 +97,19 @@ chat-room/
 2. Click "Delete" to remove the room.
 3. Confirm the deletion when prompted.
 
-### Joining a Chat Room
+### Joining and Leaving a Chat Room
 
-- Click the "Join" button on any room to simulate joining the room.
-- (Note: In this demo, the actual chat room view is not implemented as per requirements.)
+1. Click the "Join" button on any room to join the room.
+2. Once joined, the button changes to "Leave".
+3. Click "Leave" to exit a room you've joined.
 
 ## Design Decisions and Assumptions
 
-### Backend Simulation
+### Backend Implementation
 
-- The application uses a mock API service to simulate backend functionality.
-- All data is stored in memory and will be reset when the page is refreshed.
-- In a real application, these would be replaced with actual API endpoints.
+- The application uses Flask as a lightweight backend server.
+- Data is persisted in JSON files in the data directory.
+- Pre-populated with sample data when first run.
 
 ### HTMX Integration
 
@@ -112,14 +129,6 @@ chat-room/
 ### User Interface
 
 - The UI is designed to be simple and intuitive.
-- Toast notifications provide feedback for user actions.
 - Form validation ensures that room names cannot be empty.
 
-## Future Enhancements
 
-- Implement actual chat functionality within rooms
-- Add user authentication
-- Persist data using a real backend and database
-- Add real-time updates using WebSockets
-- Implement search functionality for rooms
-- Add user profile customization
